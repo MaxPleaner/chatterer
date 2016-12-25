@@ -24,12 +24,11 @@ class Routes::Index
   end
 
   def self.onopen(request, ws)
-    ws.send("Hello World!")
     Sockets << ws
   end
 
-  def self.onmessage(request, ws)
-    EM.next_tick { Sockets.each{|s| s.send('hi from server') } }
+  def self.onmessage(request, ws, msg)
+    EM.next_tick { Sockets.each{|s| s.send msg.data } }
   end
 
   def self.onclose(request, ws)

@@ -16,7 +16,7 @@ class Websocket
   def ready
     @socket.on(:open) { @stack[:onopen].call @req, @socket }
     @socket.on(:close) { @stack[:onclose].call @req, @socket }
-    @socket.on(:message) { @stack[:onmessage].call @req, @socket }
+    @socket.on(:message) { |msg| @stack[:onmessage].call @req, @socket, msg }
     @socket.rack_response
   end
 end

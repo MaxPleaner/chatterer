@@ -8,7 +8,7 @@ Loader.run
 
 Sockets = []
 
-class Main < Sinatra::Base
+class Server < Sinatra::Base
   set :server, 'thin'
   Faye::WebSocket.load_adapter('thin')
 
@@ -35,4 +35,4 @@ class Main < Sinatra::Base
 
 end
 
-Main.run! if __FILE__ == $0
+Server.run! if __FILE__ == $0
