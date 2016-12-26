@@ -3,7 +3,7 @@ require 'sinatra/base'
 require 'faye/websocket'
 require 'gemmy'
 require 'byebug'
-require 'open3'
+require 'pty'
 require_relative './lib/recursive_require'
 RecursiveRequire.init
 

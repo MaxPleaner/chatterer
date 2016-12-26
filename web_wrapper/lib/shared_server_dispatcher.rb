@@ -5,7 +5,8 @@ class SharedServerDispatcher
   Subprocess = OpenStruct.new(
     input: [],
     output: [],
-    path: "ruby ../client/client.rb"
+    command: "ruby ../client/client.rb",
+    tick: 0.25
   )
 
   def self.input
@@ -17,24 +18,50 @@ class SharedServerDispatcher
   end
 
   def self.init
-
+    # Thread.new do
+      wrap_subprocess_io
+    # end
     Thread.new do
-      Open3.popen3(Subprocess.path) do |stdin, stdout, stderr|
-        Thread.new do
-          loop do
-            input = Subprocess.input.shift
-            stdin.write input
-            stdout.each_line { |line| Subprocess.output.push line }
-            sleep 0.25
-          end
-        end
+      forward_subprocess_output_to_websockets
+    end
+  end
+
+  def self.wrap_subprocess_io
+    PTY.spawn(Subprocess.command) do |stdout, stdin, pid|
+      loop do
+        write_input_to_subprocess(stdin)
+        Subprocess.output += get_subprocess_output(stdout)
+        sleep Subprocess.tick
       end
     end
+  end
 
-    Thread.new do
-
+  def self.get_subprocess_output(stdout)
+    output = []
+    loop do
+      rdout = IO.select [stdout]
+      if rdout && rdout.member?(stdout)
+        output << stdout.readline
+      else
+        break
+      end
     end
+    output
+  end
 
+  def self.write_input_to_subprocess(stdin)
+    input = Subprocess.input.shift
+    stdin.write input if input
+  end
+
+  def self.forward_subprocess_output_to_websockets
+    loop do
+      Subprocess.output.each_index do |idx|
+        msg = Subprocess.output.shift
+        Sockets.each { |socket| socket.send } if msg
+      end
+      sleep Subprocess.tick
+    end
   end
 
 end

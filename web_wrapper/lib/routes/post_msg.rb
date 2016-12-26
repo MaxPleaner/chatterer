@@ -5,7 +5,7 @@ class Routes::PostMsg
   end
 
   def self.http_request request
-    SharedServerDispatcher.input.push params[:msg]
+    SharedServerDispatcher.input.push request.params[:msg]
     request.set_status_code 204
   end
 

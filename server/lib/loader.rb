@@ -1,3 +1,4 @@
+require 'gemmy'
 class Loader
   using Gemmy.patch("object/i/m")
   def self.run
