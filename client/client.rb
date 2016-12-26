@@ -1,23 +1,24 @@
 require 'faye/websocket'
 require 'eventmachine'
+require 'byebug'
+require 'gemmy'
 
-def start_tick_loop
+EM.run do
+
   EM.tick_loop do
-    Ws.send gets.chomp
+    Thread.new do
+      inp = gets.chomp
+      Ws.send inp
+    end
   end.on_stop { EM.stop }
-end
 
-EM.run {
+  ServerWebsocketUrl = ENV["SERVER_WS_URL"] || 'ws://localhost:3000/'
 
-  Ws = Faye::WebSocket::Client.new('ws://localhost:3000/')
+  Ws = Faye::WebSocket::Client.new ServerWebsocketUrl
 
   Ws.on :message do |event|
-    puts event.data
+    puts "cli client received: #{event.data}"
   end
 
-  Ws.on :open do |event|
-    start_tick_loop
-  end
-
-}
+end
 

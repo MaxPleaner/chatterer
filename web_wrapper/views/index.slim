@@ -1,0 +1,37 @@
+doctype html
+
+html
+
+  head
+
+    script src='jquery-3.1.1.min.js'
+
+  body
+
+    pre#log
+
+    i send a message
+    form#form action='/'
+      textarea#msg name='msg'
+      br
+      input type='submit'
+
+    coffee:
+      pathname = window.location.pathname
+      host = window.location.host
+
+      $("#form").on 'submit', (e) ->
+        $.post "/", $("#form").serialize(), (data) ->
+          console.dir(data)
+        false
+
+      ws = new WebSocket "ws://#{host}#{pathname}"
+
+      ws.onopen = ->
+        ws.send("client initial ping")
+
+      ws.onmessage= (m) ->
+        console.log "<br>#{m.data}</br>"
+
+        $("#log").append $ "<br>#{m.data}</br>"
+

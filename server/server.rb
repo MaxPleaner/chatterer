@@ -2,6 +2,7 @@ require 'sinatra/base'
 require 'faye/websocket'
 require 'gemmy'
 require 'byebug'
+require 'colored'
 
 require_relative './lib/loader.rb'
 Loader.run

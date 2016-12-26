@@ -1,15 +1,10 @@
 class Routes::Index
 
-  using Gemmy.patch "object/i/m"
-  using Gemmy.patch "method/i/bind"
-
   def self.run(request)
-    is_websocket = websocket_request? request
-    m(is_websocket ? :websocket_request : :http_request).call request
-  end
-
-  def self.websocket_request?(request)
-    Faye::WebSocket.websocket? request.env
+    is_websocket = Websocket.websocket? request
+    method(
+      is_websocket ? :websocket_request : :http_request
+    ).call request
   end
 
   def self.http_request request
@@ -18,9 +13,9 @@ class Routes::Index
 
   def self.websocket_request request
     socket = Websocket.new request
-    socket.onopen &m(:onopen)
-    socket.onmessage &m(:onmessage)
-    socket.onclose &m(:onclose)
+    socket.onopen &method(:onopen)
+    socket.onmessage &method(:onmessage)
+    socket.onclose &method(:onclose)
     socket.ready
   end
 
@@ -31,7 +26,7 @@ class Routes::Index
   def self.onmessage(request, ws, msg)
     EM.next_tick do
       Sockets.each do |s|
-        s.send "shared server received: #{msg.data}"
+        s.send "web wrapper received #{msg.data}"
       end
     end
   end
