@@ -14,7 +14,7 @@ EM.run do
       Settings[:awaiting_input] = false
       Ws.send inp
     end
-    sleep 0.2 if !Settings[:awaiting_input]
+    sleep 0.2
   end
   end.on_stop { EM.stop }
 

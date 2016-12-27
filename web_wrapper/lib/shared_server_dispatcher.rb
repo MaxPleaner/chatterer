@@ -6,7 +6,7 @@ class SharedServerDispatcher
     input: [],
     output: [],
     command: "ruby ../client/client.rb",
-    tick: 0.5
+    tick: 0.1
   )
 
   def self.input
