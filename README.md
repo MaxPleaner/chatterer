@@ -37,3 +37,5 @@ thin start -p 3001
 ```
 
 Then visit `localhost:3001` in the browser. You should be able to type messages and see them appear in the chat box.
+
+![Screenshot](./screenshot.png)
