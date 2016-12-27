@@ -19,3 +19,21 @@ all received message.
 
 In terms of a broad outline it's `server => client => web wrapper`. If you are wondering what the point of "client" is here,
 you're not wrong. "web wrapper" could actually be the client. But I felt like writing it this way, so I did. 
+
+Usage:
+
+```txt
+git clone http://github.com/maxpleaner/chatterer
+cd chatterer
+bundle install
+
+# in a new terminal
+cd server
+thin start
+
+# in another new terminal
+cd web_wrapper
+thin start -p 3001
+```
+
+Then visit `localhost:3001` in the browser. You should be able to type messages and see them appear in the chat box.
