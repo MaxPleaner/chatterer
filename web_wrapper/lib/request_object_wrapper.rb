@@ -4,6 +4,14 @@ module RequestObjectWrapper
     add_renderers \
     add_method_to_set_content_type \
     add_method_to_set_status_code \
+    make_params_indifferent_access \
+    request
+  end
+
+  def make_params_indifferent_access request
+    request.define_singleton_method(:params) do
+      super().with_indifferent_access
+    end
     request
   end
 

@@ -21,8 +21,7 @@ html
       host = window.location.host
 
       $("#form").on 'submit', (e) ->
-        $.post "/", $("#form").serialize(), (data) ->
-          console.dir(data)
+        $.post "/", $("#form").serialize()
         false
 
       ws = new WebSocket "ws://#{host}#{pathname}"
@@ -31,7 +30,6 @@ html
         ws.send("client initial ping")
 
       ws.onmessage= (m) ->
-        console.log "<br>#{m.data}</br>"
 
         $("#log").append $ "<br>#{m.data}</br>"
 
