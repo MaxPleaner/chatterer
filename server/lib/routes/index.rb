@@ -31,7 +31,7 @@ class Routes::Index
   def self.onmessage(request, ws, msg)
     EM.next_tick do
       Sockets.each do |s|
-        s.send "shared server received: #{msg.data}"
+        s.send({origin: "server", msg: msg.data}.to_json)
       end
     end
   end

@@ -40,8 +40,13 @@ class SharedServerDispatcher
     output = []
     loop do
       rdout, *rest = IO.select [stdout], [], [], 0.1
-      if rdout && rdout.member?(stdout)
-        output << stdout.readline
+      can_read_line = rdout && rdout.member?(stdout)
+      if can_read_line
+        output_text = stdout.readline
+        msg_json = JSON.parse(output_text).with_indifferent_access rescue nil
+        if msg_json && (msg_json[:origin] == "server")
+          output << msg_json[:msg]
+        end
       else
         break
       end

@@ -23,12 +23,7 @@ class Routes::Index
     Sockets << ws
   end
 
-  def self.onmessage(request, ws, msg)
-    EM.next_tick do
-      Sockets.each do |s|
-        s.send "web wrapper received #{msg.data}"
-      end
-    end
+  def self.onmessage(request, ws, msg_json)
   end
 
   def self.onclose(request, ws)

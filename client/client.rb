@@ -23,7 +23,7 @@ EM.run do
   Ws = Faye::WebSocket::Client.new ServerWebsocketUrl
 
   Ws.on :message do |event|
-    puts "cli client received: #{event.data}"
+    puts event.data
   end
 
 end
