@@ -3,6 +3,8 @@ source 'http://rubygems.org'
 
 gem 'sinatra'
 gem 'faye-websocket'
+gem 'paned_repl'
+gem 'gemmyrb'
 gem 'slim'
 
 group :production do

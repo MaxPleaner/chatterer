@@ -5,15 +5,17 @@ require 'byebug'
 require 'colored'
 
 require_relative './lib/loader.rb'
+
 Loader.run
 
-Sockets = []
-
 class Server < Sinatra::Base
+
   set :server, 'thin'
+
   Faye::WebSocket.load_adapter('thin')
 
   using Gemmy.patch("object/i/m")
+
   using Gemmy.patch("hash/i/to_open_struct")
 
   get '/' do
