@@ -61,7 +61,6 @@ class Routes::Index
   end
 
   def self.action(sender_ws, channel, name, data)
-    puts "got action"
     sockets = [ *subscriptions_by_channel[channel] ]
     sockets.each do |socket|
       unless subscriptions_by_socket[socket].include? channel
@@ -69,20 +68,17 @@ class Routes::Index
       end
     end
     sockets = [ *subscriptions_by_channel[channel] ]
-    send_message sockets, { name: name, data: data }
+    send_message sockets, build_action_response(channel, name, data)
   end
 
-  def self.send_message(sockets, msg)
+  def self.build_action_response(channel, name, data)
+    { channel: channel, name: name, data: data }.to_json
+  end
+
+  def self.send_message(sockets, msg_json)
     EM.next_tick do
-      sockets.each { |s| s.send build_msg msg }
+      sockets.each { |s| s.send msg_json }
     end
-  end
-
-  def self.build_msg(msg)
-    {
-      origin: "server",
-      msg: msg
-    }.to_json
   end
 
   def self.onclose(request, ws)

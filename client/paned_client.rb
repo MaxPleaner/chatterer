@@ -4,6 +4,15 @@ require 'eventmachine'
 
 module PanedClient
 
+  def foobar
+    main_pane = PanedRepl.panes.values.first
+    ws_client("test", channels: ["test"])
+    sleep 2.0
+    send_to_channel("test", "html", <<-HTML)
+      <ul><li>list<ul><li>list2</li></ul></li></ul>
+    HTML
+  end
+
   def ws_client(name, channels:)
     script = <<-RB
       require %{./ws_client.rb};
