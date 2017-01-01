@@ -36,18 +36,18 @@ However, dynamic CLI-client launching is not yet implemented. So a web client is
   - The server accepts two types of websocket requests, sent as JSON objects:
     - **subscribe**:
 
-                {
-                  'type': 'subscribe',
-                  'channels': ['some_channel']
-                }
+            {
+              'type': 'subscribe',
+              'channels': ['some_channel']
+            }
     - **action**:
 
-                {
-                  'type': 'action',
-                  'channel': 'some_channel',
-                  name: 'something',
-                  data: 'hello'
-                }
+            {
+              'type': 'action',
+              'channel': 'some_channel',
+              name: 'something',
+              data: 'hello'
+            }
       - actions require a channel that has previously been subscribed to. Otherwise no message will be sent.
       - The semantics of `name` and `data` are irrelevant to the base server.
       They originate from and are interpreted by the clients
