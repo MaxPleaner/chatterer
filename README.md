@@ -22,7 +22,7 @@ However, dynamic CLI-client launching is not yet implemented. So a web client is
   - From this was extracted the generator gem [sinatra_sockets](http://github.com/maxpleaner/sinatra_sockets), which provides boilerplate for sinatra with faye-websockets (eventmachine)
   - The server accepts two types of websocket requests, sent as JSON objects:
     - **subscribe**: `{ 'type': 'subscribe', 'channels': ['channel1'] }`
-    - **action**: ` { 'type': 'action', 'channel': 'channel1', name: 'msg', data: 'hello' }
+    - **action**: `{ 'type': 'action', 'channel': 'channel1', name: 'msg', data: 'hello' }`
       - actions require a channel that has previously been subscribed to. Otherwise no message will be sent.
 
 - "client" was initially a simple IO wrapper over server. However it's been
