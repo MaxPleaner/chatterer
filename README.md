@@ -1,24 +1,36 @@
-I don't really expect this to gain actual usage. It's more of me practicing building and amassing a library of components
-I can use in the future. 
+### About
 
-Specifically, this project concerns websockets and a browser wrapper for the CLI.
+From a birds-eye view, the primary goal of this project is to build a websocket-based web application.
+
+The secondary goal is to make a command-line client which can be reused by the browser client for primitive server-side rendering (using [w3m](http://w3m.sourceforge.net/))
+
+The architecture is a little unconventional:
+
+```txt
+
+Base Server => CLI clients => Web clients
+
+```
+
+Only one base server needs to be running. It can dispatch for many CLI clients.
+
+However, dynamic CLI-client launching is not yet implemented. So a web client is for a single user only.
+
+### Components
 
 - "server" is the base websocket server.
-From this was extracted the generator gem [sinatra_sockets](http://github.com/maxpleaner/sinatra_sockets).
-Note that this is obviously not an app with Rails-like complexity. It's pretty much just well-organized boiler plate for
-getting started with websockets on sinatra. It uses `faye-websockets` which uses `eventmachine`. It's currently
-just configured to echo whatever message it receives (like a basic chat room). 
+  - From this was extracted the generator gem [sinatra_sockets](http://github.com/maxpleaner/sinatra_sockets), which provides boilerplate for sinatra with faye-websockets (eventmachine)
+  - The server accepts two types of websocket requests, sent as JSON objects:
+    - **subscribe**: `{ 'type': 'subscribe', 'channels': ['channel1'] }`
+    - **action**: ` { 'type': 'action', 'channel': 'channel1', name: 'msg', data: 'hello' }
+      - actions require a channel that has previously been subscribed to. Otherwise no message will be sent.
 
-- "client" connects to "server" over websockets. It is an interactive script that waits for user input, then
-forwards the string to the server. It also listens for server messages on a background thread, and prints any messages
-that are received.
+- "client" was initially a simple IO wrapper over server. However it's been
+revised to use [paned_repl](https://github.com/maxpleaner/paned_repl), which was written for this use-case.
+  - The `paned_repl` gem launches a [pry](http://pryrepl.org) repl in Tmux, and provides a Ruby API for the Tmux session.
+  - Each subscription is launched in a separate Tmux pane. Incoming messages are displayed there, and are also saved to file to be read by the web wrapper.
 
-- "web wrapper" uses `PTY.spawn` to wrap "client". It has a websocket server that is separate from the base "server" (it only
-concerns websocket connections with browser-based clients. It has a UI which allows for entering a new message and it prints
-all received message.
-
-In terms of a broad outline it's `server => client => web wrapper`. If you are wondering what the point of "client" is here,
-you're not wrong. "web wrapper" could actually be the client. But I felt like writing it this way, so I did. 
+- "web wrapper" is incomplete, but it corresponds with a single CLI client.
 
 Usage:
 
@@ -32,10 +44,6 @@ cd server
 thin start
 
 # in another new terminal
-cd web_wrapper
-thin start -p 3001
+cd client
+sh paned_repl.sh
 ```
-
-Then visit `localhost:3001` in the browser. You should be able to type messages and see them appear in the chat box.
-
-![Screenshot](./screenshot.png)
