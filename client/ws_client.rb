@@ -25,7 +25,7 @@ class WsClient
   end
 
   def log_file_path(channel)
-    "#{@log_folder}/#{normalize_channel_name(channel)}"
+    "#{@log_folder}/#{normalize_channel_name(channel)}_log.txt"
   end
 
   def normalize_channel_name(channel)
@@ -53,9 +53,16 @@ class WsClient
   def message_handler(event)
     data = JSON.parse event.data
     case data['name']
+    when "yaml"
+      handle_yaml(data)
     when "html"
-      handle_html(data)
+      handle_html data
     end
+  end
+
+  def handle_yaml data
+    puts data["data"]
+    log_msg data["channel"], data["data"]
   end
 
   def handle_html(data)

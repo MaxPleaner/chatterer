@@ -17,7 +17,7 @@ class Routes::Index
   end
 
   def self.http_request request
-    request.renderers.slim.call :index
+    request.renderers.slim.call :not_found
   end
 
   def self.websocket_request request

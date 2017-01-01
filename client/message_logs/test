@@ -1,3 +1,37 @@
   • list
       □ list2
 
+{
+    :key1 => [
+        [0] "a",
+        [1] "list"
+    ],
+    :key2 => {
+        :key3 => [
+            [0] "list"
+        ],
+         :num => 1
+    }
+}
+
+{
+    :key1 => [
+        "a",
+        "list"
+    ],
+    :key2 => {
+        :key3 => [
+            "list"
+        ],
+         :num => 1
+    }
+}
+
+---
+:key1:
+- a
+- list
+:key2:
+  :key3:
+  - list
+  :num: 1

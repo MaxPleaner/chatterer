@@ -1,16 +1,39 @@
 require 'byebug'
+require 'awesome_print'
 require 'faye/websocket'
 require 'eventmachine'
 
 module PanedClient
 
+  def main_pane
+    @main_pane ||= PanedRepl.panes.values.first
+  end
+
+  def server
+    script = <<-RB
+      require %{./web_wrapper.rb};
+      WebWrapper.run!
+    RB
+    cmd name, rb(script)
+  end
+
+  def kill_server
+  end
+
   def foobar
-    main_pane = PanedRepl.panes.values.first
     ws_client("test", channels: ["test"])
     sleep 2.0
-    send_to_channel("test", "html", <<-HTML)
-      <ul><li>list<ul><li>list2</li></ul></li></ul>
-    HTML
+    obj = {
+      key1: [
+        "a",
+        "list"
+      ],
+      key2: {
+        key3: ["list"],
+        num: 1
+      }
+    }
+    send_to_channel("test", "yaml", obj.to_yaml)
   end
 
   def ws_client(name, channels:)
@@ -50,6 +73,17 @@ module PanedClient
 
   def message_queue
     @message_queue ||= []
+    @message_queue_folder = "./message_queue"
+    Thread.new do
+      loop do
+        Dir.glob("#{@message_queue_folder}/*").to_a.sort.each do |msg_path|
+          msg_json = JSON.parse File.read(msg_path)
+          @message_queue.push build_action_msg(msg_json)
+          `rm #{msg_path}`
+        end
+        sleep socket_client_tick_interval
+      end
+    end
   end
 
   def build_action_msg(channel, name, data)
